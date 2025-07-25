@@ -13,7 +13,7 @@ This is the frontend for the Bank App, built with Angular 20.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/bank-app-fe.git
+git clone https://github.com/gabrielabreu47/bank-app-fe.git
 cd bank-app-fe
 ```
 
