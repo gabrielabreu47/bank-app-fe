@@ -1,59 +1,78 @@
-# CodingTest
+# Bank App Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.1.
+This is the frontend for the Bank App, built with Angular 20.
 
-## Development server
+## 📦 Prerequisites
 
-To start a local development server, run:
+- Node.js >= 18.x
+- Angular CLI >= 20.x
+- npm >= 9.x
 
-```bash
-ng serve
-```
+## 🚀 Getting Started
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 1. Clone the repository
 
 ```bash
-ng generate component component-name
+git clone https://github.com/your-username/bank-app-fe.git
+cd bank-app-fe
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 2. Install dependencies
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
-
-To build the project run:
+### 3. Run the development server
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+App will be available at `http://localhost:4200`.
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🛠️ Build for Production
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+The output will be generated in the `dist/` folder.
 
-For end-to-end (e2e) testing, run:
+## 🧪 Running Tests
 
 ```bash
-ng e2e
+npm run test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+This runs unit tests using Karma and Jasmine.
 
-## Additional Resources
+## 🖼 PDF and Screenshot Tools
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project uses the following tools for generating PDFs and screenshots:
+
+- `html2canvas`
+- `html2pdf.js`
+- `jspdf`
+
+Make sure your components using these tools are rendered completely before triggering export actions.
+
+## 🧰 Other Libraries
+
+- `ngx-mask`: for input masking
+- `moment`: for date/time formatting
+- `rxjs`: for reactive programming
+
+## 📁 Project Structure
+
+- `src/app/`: Angular components, services, and modules
+- `src/assets/`: Static assets
+- `src/environments/`: Environment configuration
+
+## 🤝 Contributing
+
+If you'd like to contribute, feel free to fork the repository and submit a pull request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
