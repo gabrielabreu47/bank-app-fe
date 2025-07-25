@@ -20,13 +20,13 @@ cd bank-app-fe
 ### 2. Install dependencies
 
 ```bash
-npm install
+yarn
 ```
 
 ### 3. Run the development server
 
 ```bash
-npm start
+yarn start
 ```
 
 App will be available at `http://localhost:4200`.
@@ -34,7 +34,7 @@ App will be available at `http://localhost:4200`.
 ## 🛠️ Build for Production
 
 ```bash
-npm run build
+yarn build
 ```
 
 The output will be generated in the `dist/` folder.
@@ -42,7 +42,7 @@ The output will be generated in the `dist/` folder.
 ## 🧪 Running Tests
 
 ```bash
-npm run test
+yarn test
 ```
 
 This runs unit tests using Karma and Jasmine.
