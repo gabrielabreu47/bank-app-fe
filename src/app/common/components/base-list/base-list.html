@@ -1,0 +1,84 @@
+<div [id]="tableId" class="base-list-container">
+  <div class="header">
+    <h2 class="title">
+    {{title}}
+  </h2>
+    <ng-content select="[header]"></ng-content>
+  </div>
+  <div>
+    <div class="search-container">
+      <div class="base-list-header-left">
+        <ng-content select="[customFilter]"></ng-content>
+        @if (canSearch){
+          <input class="search-input" [(ngModel)]="searchFilter" (keyup)="handleSearch()" type="text" placeholder="Buscar">
+        }
+      </div>
+      @if(canCreate){
+        <button class="cta-button" (click)="handleCTAClicked()">Agregar</button>
+      }
+    </div>
+    <table class="content-table">
+      <thead class="content-table-header">
+        <tr class="content-table-header-row">
+          @for (column of columns; track $index){
+            <th class="content-table-header-cell">
+              {{column.label}}
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody class="content-table-body">
+      @if(!loading && !items.length){
+        No tiene registros
+      }
+        @for (item of items; track $index){
+          <tr class="content-table-row" [class]="{'clickable': hasDetails}" (click)="hasDetails ? goToDetails(item) : undefined">
+            @for (column of columns; track $index){
+
+              <td class="content-table-cell">
+                @switch (column.type){
+                  @case ('date'){
+                    {{item[column.value] | date: 'dd/MM/yyyy'}}
+                  }
+                  @case ('phone'){
+                    {{item[column.value] | mask: '(000) 000-0000'}}
+                  }
+                  @case ('number'){
+                    {{item[column.value] | number: '1.2-2'}}
+                  }
+                  @default {
+                    {{item[column.value]}}
+                  }
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+    <nav class="pagination-container">
+      <select class="page-size-input" [(ngModel)]="pageSize" (change)="pageSizeChange.emit(pageSize)">
+        <option>5</option>
+        <option>10</option>
+        <option>15</option>
+      </select>
+      <ul class="pagination-list">
+        <li class="pagination-button">
+          <button [disabled]="!hasPreviousPage" (click)="paginatePrev()" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </button>
+        </li>
+        <li>
+          <a class="pagination-index">
+            {{currentPage}}/{{totalPages}}
+          </a>
+        </li>
+        <li class="pagination-button">
+          <button [disabled]="!hasNextPage" (click)="paginateNext()" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

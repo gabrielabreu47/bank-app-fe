@@ -1,0 +1,17 @@
+<app-base-list
+  title="Cuentas"
+  [items]="accounts"
+  [filterBy]="filterBy"
+  [(pageSize)]="pageSize"
+  [(currentPage)]="currentPage"
+  [totalPages]="totalPages"
+  [loading]="loading"
+  [canCreate]="!!client"
+  createRoute="accounts"
+  detailsRoute="accounts"
+  [(searchFilter)]="searchFilter"
+  (searchFilterChange)="handleSearchFilterChange()"
+  (pageSizeChange)="getAccounts()"
+  (currentPageChange)="getAccounts()"
+  [columns]="columns">
+</app-base-list>

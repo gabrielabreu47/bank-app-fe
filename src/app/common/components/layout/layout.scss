@@ -1,0 +1,17 @@
+header{
+  padding-bottom: 20px;
+  border-bottom: 1px solid black;
+
+  h1{
+    color: deepskyblue;
+    margin-bottom: 0;
+  }
+}
+
+.main-content-container{
+  height: 100%;
+
+  .main-content{
+    padding: 20px 40px;
+  }
+}

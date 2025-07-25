@@ -1,0 +1,17 @@
+<app-base-list
+  title="Movimientos"
+  [items]="movements"
+  [filterBy]="filterBy"
+  [(currentPage)]="currentPage"
+  [(pageSize)]="pageSize"
+  [totalPages]="totalPages"
+  (currentPageChange)="getMovements()"
+  (pageSizeChange)="getMovements()"
+  [(searchFilter)]="searchFilter"
+  (searchFilterChange)="handleSearchFilterChange()"
+  [loading]="loading"
+  [canCreate]="!!account"
+  [createRoute]="`movements`"
+  [hasDetails]="false"
+  [columns]="columns">
+</app-base-list>

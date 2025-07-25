@@ -1,0 +1,16 @@
+.print-button{
+  display: block;
+  margin-left: auto;
+  border-color: black;
+  border-width: 1px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+
+  &:hover{
+    background-color: black;
+    color: white;
+  }
+}

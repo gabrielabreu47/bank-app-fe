@@ -1,0 +1,15 @@
+<app-base-list
+  title="Clientes"
+  [items]="clients"
+  [filterBy]="filterBy"
+  [columns]="columns"
+  [loading]="loading"
+  [totalPages]="totalPages"
+  [(currentPage)]="currentPage"
+  (currentPageChange)="getClients()"
+  [(pageSize)]="pageSize"
+  [(searchFilter)]="searchFilter"
+  (searchFilterChange)="handleSearchFilterChange()"
+  (pageSizeChange)="getClients()"
+>
+</app-base-list>

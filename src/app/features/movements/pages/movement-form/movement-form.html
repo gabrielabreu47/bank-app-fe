@@ -1,0 +1,17 @@
+<app-single-item-layout [backRoute]="`clients/${clientId}/accounts/${accountId}`" [title]="'Crear movimiento'">
+  <form [formGroup]="movementForm" (submit)="handleSubmit()">
+    <h2 class="title">Crear movimiento</h2>
+    <div class="form-input-container">
+      <label for="type">Tipo</label>
+      <select class="form-input" formControlName="type" id="type">
+        <option [value]="MovementType.Credit">Crédito</option>
+        <option [value]="MovementType.Debit">Débito</option>
+      </select>
+    </div>
+    <div class="form-input-container">
+      <label for="value">Valor</label>
+      <input class="form-input" mask="separator" thousandSeparator="," formControlName="value" id="value">
+    </div>
+    <input [disabled]="submitting || movementForm.invalid" type="submit" value="Guardar">
+  </form>
+</app-single-item-layout>

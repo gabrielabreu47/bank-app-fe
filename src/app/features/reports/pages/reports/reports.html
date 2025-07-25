@@ -1,0 +1,33 @@
+<app-base-list
+  [filterBy]="filterBy"
+  [columns]="columns"
+  [items]="report?.movements || []"
+  [hasDetails]="false"
+  [canCreate]="false"
+  [canSearch]="false"
+  tableId="reports-table"
+  title="Reportes">
+  <ng-content header>
+    @if(report){
+      <div class="report-header">
+        <p class="title"><b>{{report.clientName}}</b></p>
+        <p class="subtitle">No. Cuenta: {{report.accountNumber}}</p>
+      </div>
+    }
+  </ng-content>
+  <ng-container customFilter>
+    <div class="form-input-container">
+      <label>
+        Desde
+      </label>
+      <input [(ngModel)]="fromDate" (change)="getReports()" type="date" placeholder="Desde">
+    </div>
+    <div class="form-input-container">
+      <label>
+        Hasta
+      </label>
+      <input [(ngModel)]="toDate" (change)="getReports()" type="date" placeholder="Desde">
+    </div>
+  </ng-container>
+</app-base-list>
+<button class="print-button" (click)="downloadPdf()">print report</button>

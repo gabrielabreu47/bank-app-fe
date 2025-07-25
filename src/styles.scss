@@ -1,0 +1,16 @@
+html, body{
+  height: 100%;
+}
+
+.form-input-container, .checkbox-container{
+  margin-bottom: 10px;
+}
+
+.form-input-container{
+  display: flex;
+  flex-direction: column;
+}
+
+.invalid{
+  color: red;
+}

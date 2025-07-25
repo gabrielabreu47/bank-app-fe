@@ -1,0 +1,29 @@
+<app-single-item-layout [backRoute]="`clients/${clientId}`">
+  <form [formGroup]="accountForm" (submit)="handleSubmit()">
+    <h2 class="title">{{(account ? 'Actualizar' : 'Crear') + ' cuenta'}}</h2>
+    <div class="form-input-container">
+      <label for="accountNumber">Número de cuenta</label>
+      <input class="form-input" formControlName="accountNumber" id="accountNumber">
+    </div>
+    <div class="form-input-container">
+      <label for="type">Tipo</label>
+      <select class="form-input" formControlName="type" id="type">
+        <option [value]="AccountType.Checkings">Corriente</option>
+        <option [value]="AccountType.Savings">Ahorros</option>
+      </select>
+    </div>
+    <div class="form-input-container">
+      <label for="balance">Balance {{account?'Actual':'Inicial'}}</label>
+      <input mask="separator" thousandSeparator="," class="form-input" formControlName="balance" id="balance">
+    </div>
+    <div class="checkbox-container">
+      <label for="status">Estado</label>
+      <input class="form-input" type="checkbox" formControlName="status" id="status">
+    </div>
+    <input [disabled]="submitting || accountForm.invalid" type="submit" value="Guardar">
+  </form>
+  @if(account){
+    <app-movements [account]="account"></app-movements>
+    <app-reports [account]="account"></app-reports>
+  }
+</app-single-item-layout>

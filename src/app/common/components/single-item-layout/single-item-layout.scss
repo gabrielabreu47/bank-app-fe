@@ -1,0 +1,19 @@
+.single-item-content{
+  .title{
+    margin-top: 0;
+  }
+
+  max-width: 720px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.back-button{
+  margin-right: auto;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 15px;
+}
