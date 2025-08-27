@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { SingleItemLayout } from './single-item-layout';
-import { Router } from '@angular/router';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component} from '@angular/core';
+import {By} from '@angular/platform-browser';
+import {SingleItemLayout} from './single-item-layout';
+import {Router} from '@angular/router';
 
 // Test host component to test content projection
 @Component({

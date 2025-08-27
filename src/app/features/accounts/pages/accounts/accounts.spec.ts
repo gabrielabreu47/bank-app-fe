@@ -1,9 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { Accounts } from './accounts';
-import { AccountsService } from '../../../../data/services/accounts.service';
-import { translatedAccountType } from '../../../../data/models/account.model';
-import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {Accounts} from './accounts';
+import {AccountsService} from '../../../../data/services/accounts.service';
+import {provideHttpClient} from '@angular/common/http';
 import {provideRouter} from '@angular/router';
 import {routes} from '../../../../app.routes';
 

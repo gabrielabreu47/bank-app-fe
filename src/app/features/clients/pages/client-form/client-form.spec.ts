@@ -1,69 +1,75 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
-import moment from 'moment';
+import {ComponentFixture, TestBed, fakeAsync, tick} from '@angular/core/testing';
+import {ClientForm} from './client-form';
+import {provideRouter, Router, ActivatedRoute} from '@angular/router';
+import {By} from '@angular/platform-browser';
+import {ClientsService} from '../../../../data/services/clients.service';
+import {provideEnvironmentNgxMask} from 'ngx-mask';
 
-import { ClientForm } from './client-form';
-import { ClientsService } from '../../../../data/services/clients.service';
-import { Gender } from '../../../../common/enums/gender.enum';
-import {provideHttpClient} from '@angular/common/http';
-import {provideEnvironmentNgxMask, provideNgxMask} from 'ngx-mask';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-
-describe('ClientForm', () => {
-  let component: ClientForm;
+describe('ClientForm (integration)', () => {
   let fixture: ComponentFixture<ClientForm>;
+  let component: ClientForm;
+
   let clientsServiceSpy: jasmine.SpyObj<ClientsService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-  let activatedRouteMock: any;
-  const testDate = '1990-01-01';
+
+  function fillCreateFormValidly() {
+    const name = fixture.debugElement.query(By.css('#name'));
+    const lastName = fixture.debugElement.query(By.css('#lastName'));
+    const password = fixture.debugElement.query(By.css('#password'));
+    const confirmPassword = fixture.debugElement.query(By.css('#confirmPassword'));
+    const gender = fixture.debugElement.query(By.css('#gender'));
+    const birthDate = fixture.debugElement.query(By.css('#birthDate'));
+    const identification = fixture.debugElement.query(By.css('#identification'));
+    const address = fixture.debugElement.query(By.css('#address'));
+    const phone = fixture.debugElement.query(By.css('#phone'));
+
+    name.nativeElement.value = 'John';
+    name.nativeElement.dispatchEvent(new Event('input'));
+
+    lastName.nativeElement.value = 'Doe';
+    lastName.nativeElement.dispatchEvent(new Event('input'));
+
+    password.nativeElement.value = '123456';
+    password.nativeElement.dispatchEvent(new Event('input'));
+
+    confirmPassword.nativeElement.value = '123456';
+    confirmPassword.nativeElement.dispatchEvent(new Event('input'));
+
+    gender.nativeElement.value = '0'; // Gender.M
+    gender.nativeElement.dispatchEvent(new Event('change'));
+
+    birthDate.nativeElement.value = '1990-01-01';
+    birthDate.nativeElement.dispatchEvent(new Event('input'));
+
+    identification.nativeElement.value = 'ID-001';
+    identification.nativeElement.dispatchEvent(new Event('input'));
+
+    address.nativeElement.value = '123 Street';
+    address.nativeElement.dispatchEvent(new Event('input'));
+
+    phone.nativeElement.value = '(123) 456-7890';
+    phone.nativeElement.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+  }
 
   beforeEach(async () => {
-    const clientsSpy = jasmine.createSpyObj('ClientsService', ['create', 'update', 'readById']);
-    const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
-
-    activatedRouteMock = {
-      snapshot: {
-        params: {}
-      }
-    };
+    clientsServiceSpy = jasmine.createSpyObj('ClientsService', ['create', 'update', 'readById']);
 
     await TestBed.configureTestingModule({
-      imports: [ClientForm, ReactiveFormsModule, HttpClientTestingModule],
+      imports: [ClientForm],
       providers: [
-        { provide: ClientsService, useValue: clientsSpy },
-        { provide: Router, useValue: routerSpyObj },
-        { provide: ActivatedRoute, useValue: activatedRouteMock },
-        provideEnvironmentNgxMask()
-      ]
+        provideRouter([]),
+        provideEnvironmentNgxMask(),
+        { provide: ClientsService, useValue: clientsServiceSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { params: {} } } },
+      ],
     })
-    .compileComponents();
-
-    clientsServiceSpy = TestBed.inject(ClientsService) as jasmine.SpyObj<ClientsService>;
-    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
-
-    const client = {
-      id: '1',
-      name: 'John',
-      lastName: 'Doe',
-      gender: Gender.M,
-      birthDate: testDate,
-      identification: '123456789',
-      address: '123 Test St',
-      phone: '1234567890',
-      password: 'password',
-      status: true
-    }
-
-    // Mock the create, update, and readById methods
-    clientsServiceSpy.create.and.returnValue(Promise.resolve(client));
-    clientsServiceSpy.update.and.returnValue(Promise.resolve(client));
-    clientsServiceSpy.readById.and.returnValue(Promise.resolve({
-      code: 200,
-      message: 'success',
-      succeed: true,
-      result: client
-    }));
+      .overrideComponent(ClientForm, {
+        set: {
+          providers: [{ provide: ClientsService, useValue: clientsServiceSpy }],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(ClientForm);
     component = fixture.componentInstance;
@@ -74,62 +80,95 @@ describe('ClientForm', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize form with empty values', () => {
-    expect(component.clientForm.get('name')?.value).toBe('');
-    expect(component.clientForm.get('lastName')?.value).toBe('');
-    expect(component.clientForm.get('password')?.value).toBe('');
-    expect(component.clientForm.get('confirmPassword')?.value).toBe('');
-    expect(component.clientForm.get('gender')?.value).toBe('');
-    expect(component.clientForm.get('birthDate')?.value).toBe('');
-    expect(component.clientForm.get('identification')?.value).toBe('');
-    expect(component.clientForm.get('address')?.value).toBe('');
-    expect(component.clientForm.get('phone')?.value).toBe('');
+  it('should keep submit disabled until form is valid and show password mismatch message', () => {
+    const submit = fixture.debugElement.query(By.css('input[type="submit"]'));
+    expect(submit.nativeElement.disabled).toBeTrue();
+
+    // Set mismatching passwords
+    const password = fixture.debugElement.query(By.css('#password'));
+    const confirmPassword = fixture.debugElement.query(By.css('#confirmPassword'));
+
+    password.nativeElement.value = 'abc';
+    password.nativeElement.dispatchEvent(new Event('input'));
+    confirmPassword.nativeElement.value = 'xyz';
+    confirmPassword.nativeElement.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const mismatch = fixture.debugElement.query(By.css('.invalid'));
+    expect(mismatch.nativeElement.textContent.trim()).toContain('Las contraseñas no coinciden');
+    expect(submit.nativeElement.disabled).toBeTrue();
+
+    // Fix passwords and fill the rest of fields
+    fillCreateFormValidly();
+    expect(component.clientForm.valid).toBeTrue();
+    expect(submit.nativeElement.disabled).toBeFalse();
   });
 
-  it('should mark form as invalid when empty', () => {
-    expect(component.clientForm.valid).toBeFalsy();
-  });
+  it('should call service.create and navigate on create submit', fakeAsync(() => {
+    const router = TestBed.inject(Router);
+    const navSpy = spyOn(router, 'navigate');
+    clientsServiceSpy.create.and.returnValue(Promise.resolve({} as any));
 
-  it('should mark form as valid when all required fields are filled and passwords match', () => {
-    component.clientForm.patchValue({
-      name: 'John',
-      lastName: 'Doe',
-      password: 'password',
-      confirmPassword: 'password',
-      gender: Gender.M,
-      birthDate: testDate,
-      identification: '123456789',
-      address: '123 Test St',
-      phone: '1234567890'
-    });
-    expect(component.clientForm.valid).toBeTruthy();
-    expect(component.passwordsMatch).toBeTrue();
-  });
+    fillCreateFormValidly();
 
-  it('should mark form as invalid when passwords do not match', () => {
-    component.clientForm.patchValue({
-      name: 'John',
-      lastName: 'Doe',
-      password: 'password',
-      confirmPassword: 'different',
-      gender: Gender.M,
-      birthDate: testDate,
-      identification: '123456789',
-      address: '123 Test St',
-      phone: '1234567890'
-    });
-    expect(component.clientForm.valid).toBeFalsy();
-    expect(component.passwordsMatch).toBeFalse();
-  });
+    const form = fixture.debugElement.query(By.css('form'));
+    form.triggerEventHandler('submit', {});
+    fixture.detectChanges();
 
-  it('should clear password validators when editing existing client', async () => {
-    activatedRouteMock.snapshot.params.clientId = '1';
+    // flush async submit
+    tick();
 
+    expect(clientsServiceSpy.create).toHaveBeenCalled();
+    expect(navSpy).toHaveBeenCalledWith(['/clients']);
+  }));
+
+  it('should load client on edit and call update on submit', fakeAsync(() => {
+    // Reconfigure with route param and readById data
+    const router = TestBed.inject(Router);
+    const navSpy = spyOn(router, 'navigate');
+
+    const clientData = {
+      id: 'c1',
+      name: 'Jane',
+      lastName: 'Smith',
+      gender: 0,
+      birthDate: '1992-02-02',
+      identification: 'ID-002',
+      address: '456 Ave',
+      phone: '(111) 111-1111',
+      password: '',
+      status: true,
+    };
+
+    // Override ActivatedRoute snapshot param and service
+    const ar = TestBed.inject(ActivatedRoute) as any;
+    ar.snapshot.params = { clientId: 'c1' };
+    clientsServiceSpy.readById.and.returnValue(Promise.resolve({ result: clientData } as any));
+
+    // Trigger ngOnInit again
     component.ngOnInit();
+    tick();
+    fixture.detectChanges();
 
-    await fixture.whenStable();
+    // Password fields are hidden in edit mode
+    const pwd = fixture.debugElement.query(By.css('#password'));
+    const cpwd = fixture.debugElement.query(By.css('#confirmPassword'));
+    expect(pwd).toBeNull();
+    expect(cpwd).toBeNull();
 
-    expect(component.clientForm.get('password')?.validator).toBeNull();
-    expect(component.clientForm.get('confirmPassword')?.validator).toBeNull();
-  });
+    // Update some field and submit
+    const name = fixture.debugElement.query(By.css('#name'));
+    name.nativeElement.value = 'Janet';
+    name.nativeElement.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    clientsServiceSpy.update.and.returnValue(Promise.resolve({} as any));
+
+    const form = fixture.debugElement.query(By.css('form'));
+    form.triggerEventHandler('submit', {});
+    tick();
+
+    expect(clientsServiceSpy.update).toHaveBeenCalled();
+    expect(navSpy).toHaveBeenCalledWith(['/clients']);
+  }));
 });

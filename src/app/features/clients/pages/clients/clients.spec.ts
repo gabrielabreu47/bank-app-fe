@@ -1,11 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import moment from 'moment';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { Clients } from './clients';
-import { ClientsService } from '../../../../data/services/clients.service';
-import { translatedGender } from '../../../../common/enums/gender.enum';
-import {HttpClient, HttpClientModule, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
-import {ActivatedRoute, provideRouter} from '@angular/router';
+import {Clients} from './clients';
+import {ClientsService} from '../../../../data/services/clients.service';
+import {provideRouter} from '@angular/router';
 import {routes} from '../../../../app.routes';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 

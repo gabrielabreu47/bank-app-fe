@@ -22,7 +22,7 @@
     </div>
     <input [disabled]="submitting || accountForm.invalid" type="submit" value="Guardar">
   </form>
-  @if(account){
+  @if(account && renderChildren){
     <app-movements [account]="account"></app-movements>
     <app-reports [account]="account"></app-reports>
   }

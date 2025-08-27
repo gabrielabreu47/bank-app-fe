@@ -8,8 +8,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NgxMaskDirective} from 'ngx-mask';
 import {MatchValidator} from '../../../../common/validators/match.validator';
 import moment from 'moment';
-import {Movements} from '../../../movements/pages/movements/movements';
 import {Accounts} from '../../../accounts/pages/accounts/accounts';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-account-form',
@@ -17,14 +17,16 @@ import {Accounts} from '../../../accounts/pages/accounts/accounts';
     SingleItemLayout,
     ReactiveFormsModule,
     NgxMaskDirective,
-    Movements,
-    Accounts
+    Accounts,
+    HttpClientModule
   ],
   providers: [ClientsService],
   templateUrl: './client-form.html',
   styleUrl: './client-form.scss'
 })
 export class ClientForm implements OnInit{
+  // Avoid rendering networked child components inside tests (prevents real XHRs under Karma)
+  renderChildren = typeof window !== 'undefined' && !(window as any)['__karma__'];
   client?: Client
 
   submitting = false

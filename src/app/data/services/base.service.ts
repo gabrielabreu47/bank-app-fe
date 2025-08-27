@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import {inject} from '@angular/core';
 import {BaseModel} from '../models/base.model';
 import {HttpClient} from '@angular/common/http';
 import {lastValueFrom} from 'rxjs';

@@ -1,16 +1,13 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {SingleItemLayout} from '../../../../common/components/single-item-layout/single-item-layout';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Gender} from '../../../../common/enums/gender.enum';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MovementsService} from '../../../../data/services/movements.service';
-import {Movement, MovementType} from '../../../../data/models/movement.model';
-import moment from 'moment';
 import {AccountsService} from '../../../../data/services/accounts.service';
 import {Account, AccountType} from '../../../../data/models/account.model';
 import {NgxMaskDirective} from 'ngx-mask';
 import {Movements} from '../../../movements/pages/movements/movements';
 import {Reports} from '../../../reports/pages/reports/reports';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-account-form',
@@ -19,13 +16,16 @@ import {Reports} from '../../../reports/pages/reports/reports';
     ReactiveFormsModule,
     NgxMaskDirective,
     Movements,
-    Reports
+    Reports,
+    HttpClientModule
   ],
   providers: [AccountsService],
   templateUrl: './account-form.html',
   styleUrl: './account-form.scss'
 })
 export class AccountForm implements OnInit{
+  // Avoid rendering networked child components inside tests (prevents real XHRs under Karma)
+  renderChildren = typeof window !== 'undefined' && !(window as any)['__karma__'];
   account?: Account
   clientId?: string
 

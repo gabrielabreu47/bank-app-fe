@@ -1,6 +1,5 @@
 import {BaseService} from './base.service';
 import {Account} from '../models/account.model';
-import {Reports} from '../../features/reports/pages/reports/reports';
 import {Report} from '../models/report.model';
 
 export class AccountsService extends BaseService<Account>{

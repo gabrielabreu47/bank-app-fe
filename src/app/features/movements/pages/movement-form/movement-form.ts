@@ -1,11 +1,9 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {SingleItemLayout} from '../../../../common/components/single-item-layout/single-item-layout';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Gender} from '../../../../common/enums/gender.enum';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MovementsService} from '../../../../data/services/movements.service';
-import {Movement, MovementType} from '../../../../data/models/movement.model';
-import moment from 'moment';
+import {MovementType} from '../../../../data/models/movement.model';
 import {NgxMaskDirective} from 'ngx-mask';
 
 @Component({

@@ -1,5 +1,5 @@
 <div [id]="tableId" class="base-list-container">
-  <div class="header">
+ <div class="header">
     <h2 class="title">
     {{title}}
   </h2>
@@ -17,7 +17,8 @@
         <button class="cta-button" (click)="handleCTAClicked()">Agregar</button>
       }
     </div>
-    <table class="content-table">
+    <div class="table-responsive" role="region" aria-label="Listado" tabindex="0">
+      <table id="content-table" class="content-table">
       <thead class="content-table-header">
         <tr class="content-table-header-row">
           @for (column of columns; track $index){
@@ -56,6 +57,7 @@
         }
       </tbody>
     </table>
+    </div>
     <nav class="pagination-container">
       <select class="page-size-input" [(ngModel)]="pageSize" (change)="pageSizeChange.emit(pageSize)">
         <option>5</option>

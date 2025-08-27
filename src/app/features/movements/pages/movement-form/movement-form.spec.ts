@@ -1,60 +1,43 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
-import { of } from 'rxjs';
-
-import { MovementForm } from './movement-form';
-import { MovementsService } from '../../../../data/services/movements.service';
-import { MovementType } from '../../../../data/models/movement.model';
-import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {ComponentFixture, TestBed, fakeAsync, tick} from '@angular/core/testing';
+import {MovementForm} from './movement-form';
+import {provideRouter, Router, ActivatedRoute} from '@angular/router';
+import {By} from '@angular/platform-browser';
+import {MovementsService} from '../../../../data/services/movements.service';
 import {provideEnvironmentNgxMask} from 'ngx-mask';
-import {HttpClientTestingModule, provideHttpClientTesting} from '@angular/common/http/testing';
+import {provideHttpClient} from '@angular/common/http';
 
-describe('MovementForm', () => {
-  let component: MovementForm;
+describe('MovementForm (integration)', () => {
   let fixture: ComponentFixture<MovementForm>;
-  let movementsServiceSpy: jasmine.SpyObj<MovementsService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let component: MovementForm;
+  let movementsService: MovementsService;
+
+  function fillFormValidly() {
+    const type = fixture.debugElement.query(By.css('#type'));
+    const value = fixture.debugElement.query(By.css('#value'));
+
+    type.nativeElement.value = '0'; // MovementType numeric enum
+    type.nativeElement.dispatchEvent(new Event('change'));
+
+    value.nativeElement.value = '150';
+    value.nativeElement.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+  }
 
   beforeEach(async () => {
-    const movementsSpy = jasmine.createSpyObj('MovementsService', ['create']);
-    const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
-
     await TestBed.configureTestingModule({
-      imports: [MovementForm, ReactiveFormsModule, HttpClientTestingModule],
+      imports: [MovementForm],
       providers: [
-        { provide: MovementsService, useValue: movementsSpy },
-        { provide: Router, useValue: routerSpyObj },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              params: {
-                accountId: '1',
-                clientId: '2'
-              }
-            }
-          }
-        },
-        provideEnvironmentNgxMask()
-      ]
-    })
-    .compileComponents();
-
-    movementsServiceSpy = TestBed.inject(MovementsService) as jasmine.SpyObj<MovementsService>;
-    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
-
-    // Mock the create method to return a resolved promise
-    movementsServiceSpy.create.and.returnValue(Promise.resolve({
-      type: MovementType.Credit,
-      value: 100,
-      date: '2025',
-      balance: 0,
-      id: '1'
-    }));
+        provideRouter([]),
+        provideEnvironmentNgxMask(),
+        provideHttpClient(),
+        { provide: ActivatedRoute, useValue: { snapshot: { params: { clientId: 'c1', accountId: 'a1' } } } },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MovementForm);
     component = fixture.componentInstance;
+    movementsService = fixture.componentRef.injector.get(MovementsService);
     fixture.detectChanges();
   });
 
@@ -62,25 +45,29 @@ describe('MovementForm', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize form with empty values', () => {
-    expect(component.movementForm.get('type')?.value).toBe('');
-    expect(component.movementForm.get('value')?.value).toBe(0);
+  it('should keep submit disabled until form is valid and then enable', () => {
+    const submit = fixture.debugElement.query(By.css('input[type="submit"]'));
+    expect(submit.nativeElement.disabled).toBeTrue();
+
+    fillFormValidly();
+
+    expect(component.movementForm.valid).toBeTrue();
+    expect(submit.nativeElement.disabled).toBeFalse();
   });
 
-  it('should set accountId and clientId from route params', () => {
-    expect(component.accountId).toBe('1');
-    expect(component.clientId).toBe('2');
-  });
+  it('should call service.create and navigate on submit', fakeAsync(() => {
+    const router = TestBed.inject(Router);
+    const navSpy = spyOn(router, 'navigate');
+    spyOn(movementsService, 'create').and.returnValue(Promise.resolve({} as any));
 
-  it('should mark form as invalid when empty', () => {
-    expect(component.movementForm.valid).toBeFalsy();
-  });
+    fillFormValidly();
 
-  it('should mark form as valid when all required fields are filled', () => {
-    component.movementForm.patchValue({
-      type: MovementType.Credit.toString(),
-      value: 100
-    });
-    expect(component.movementForm.valid).toBeTruthy();
-  });
+    const form = fixture.debugElement.query(By.css('form'));
+    form.triggerEventHandler('submit', {});
+    fixture.detectChanges();
+    tick();
+
+    expect(movementsService.create).toHaveBeenCalled();
+    expect(navSpy).toHaveBeenCalledWith(['/movements']);
+  }));
 });
